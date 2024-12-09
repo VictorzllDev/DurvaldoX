@@ -9,4 +9,4 @@ const collisions = [
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 ]
 
-export const collisionsBlocks = parsedCollisions(collisions)
+export const collisionBlocks = parsedCollisions(collisions)

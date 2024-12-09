@@ -1,4 +1,4 @@
-import { collisionsBlocks } from './assets/maps/map_01/collisions'
+import { collisionBlocks } from './assets/maps/map_01/collisions'
 import { Player } from './models/player.models'
 import { Sprite } from './models/sprite.models'
 import './style.css'
@@ -20,7 +20,9 @@ const map01 = new Sprite({
   imageSrc: '/src/assets/maps/map_01/map.png',
 })
 
-const player = new Player()
+const player = new Player({
+  collisionBlocks,
+})
 
 const keys = {
   w: {
@@ -38,16 +40,16 @@ const loop = () => {
   ctx.clearRect(0, 0, canvas.width, canvas.height)
 
   map01.draw(ctx)
-  for (let i = 0; i < collisionsBlocks.length; i++) {
-    collisionsBlocks[i].draw(ctx)
+  for (let i = 0; i < collisionBlocks.length; i++) {
+    collisionBlocks[i].draw(ctx)
   }
 
   player.velocity.x = 0
-  if (keys.a.pressed) player.velocity.x = -4
-  if (keys.d.pressed) player.velocity.x = 4
+  if (keys.a.pressed) player.velocity.x = -2
+  if (keys.d.pressed) player.velocity.x = 2
 
   player.draw(ctx)
-  player.update(canvas)
+  player.update()
 
   requestAnimationFrame(loop)
 }
