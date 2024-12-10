@@ -1,6 +1,7 @@
 import type { CollisionBlock } from './collisionBlock.models'
+import { Sprite } from './sprite.models'
 
-export class Player {
+export class Player extends Sprite {
   public width: number
   public height: number
   public position: { x: number; y: number }
@@ -8,11 +9,18 @@ export class Player {
   public velocity: { x: number; y: number }
   public gravity: number
   public collisionBlocks: CollisionBlock[]
+  public hitbox: { position: { x: number; y: number }; width: number; height: number }
 
   constructor({
     collisionBlocks,
     initialPosition,
-  }: { collisionBlocks: CollisionBlock[]; initialPosition: { x: number; y: number } }) {
+    spriteSrc,
+  }: {
+    collisionBlocks: CollisionBlock[]
+    initialPosition: { x: number; y: number }
+    spriteSrc: string
+  }) {
+    super({ position: initialPosition, spriteSrc, frameRate: 4 })
     this.width = 20
     this.height = 20
     this.position = initialPosition
@@ -25,21 +33,31 @@ export class Player {
     }
     this.gravity = 1.3
     this.collisionBlocks = collisionBlocks
-  }
-
-  draw(ctx: CanvasRenderingContext2D): void {
-    ctx.fillStyle = 'red'
-    ctx.fillRect(this.position.x, this.position.y, this.width, this.height)
+    this.hitbox = { position: { x: this.position.x, y: this.position.y }, width: 0, height: 0 }
   }
 
   update(): void {
     this.position.x += this.velocity.x
 
-    console.log(this.velocity.y)
-    // console.log(this.position.y)
+    this.updateHitbox()
+
     this.checkForHorizontalCollisions()
     this.applyGravity()
+
+    this.updateHitbox()
+
     this.checkForVerticalCollisions()
+  }
+
+  updateHitbox(): void {
+    this.hitbox = {
+      position: {
+        x: this.position.x + 7,
+        y: this.position.y + 14,
+      },
+      width: 18,
+      height: 18,
+    }
   }
 
   checkForHorizontalCollisions(): void {
@@ -47,17 +65,19 @@ export class Player {
       const collisionBlock = this.collisionBlocks[i]
 
       if (
-        this.position.x <= collisionBlock.position.x + collisionBlock.width &&
-        this.position.x + this.width >= collisionBlock.position.x &&
-        this.position.y + this.height >= collisionBlock.position.y &&
-        this.position.y <= collisionBlock.position.y + collisionBlock.height
+        this.hitbox.position.x <= collisionBlock.position.x + collisionBlock.width &&
+        this.hitbox.position.x + this.hitbox.width >= collisionBlock.position.x &&
+        this.hitbox.position.y + this.hitbox.height >= collisionBlock.position.y &&
+        this.hitbox.position.y <= collisionBlock.position.y + collisionBlock.height
       ) {
         if (this.velocity.x < 0) {
-          this.position.x = collisionBlock.position.x + collisionBlock.width + 0.01
+          const offset = this.hitbox.position.x - this.position.x
+          this.position.x = collisionBlock.position.x + collisionBlock.width - offset + 0.01
           break
         }
         if (this.velocity.x > 0) {
-          this.position.x = collisionBlock.position.x - this.width - 0.01
+          const offset = this.hitbox.position.x - this.position.x + this.hitbox.width
+          this.position.x = collisionBlock.position.x - offset - 0.01
           break
         }
       }
@@ -74,19 +94,21 @@ export class Player {
       const collisionBlock = this.collisionBlocks[i]
 
       if (
-        this.position.x <= collisionBlock.position.x + collisionBlock.width &&
-        this.position.x + this.width >= collisionBlock.position.x &&
-        this.position.y + this.height >= collisionBlock.position.y &&
-        this.position.y <= collisionBlock.position.y + collisionBlock.height
+        this.hitbox.position.x <= collisionBlock.position.x + collisionBlock.width &&
+        this.hitbox.position.x + this.hitbox.width >= collisionBlock.position.x &&
+        this.hitbox.position.y + this.hitbox.height >= collisionBlock.position.y &&
+        this.hitbox.position.y <= collisionBlock.position.y + collisionBlock.height
       ) {
         if (this.velocity.y < 0) {
           this.velocity.y = 0
-          this.position.y = collisionBlock.position.y + collisionBlock.height + 0.01
+          const offset = this.hitbox.position.y - this.position.y
+          this.position.y = collisionBlock.position.y + collisionBlock.height - offset + 0.01
           break
         }
         if (this.velocity.y > 0) {
           this.velocity.y = 0
-          this.position.y = collisionBlock.position.y - this.height - 0.01
+          const offset = this.hitbox.position.y - this.position.y + this.hitbox.height
+          this.position.y = collisionBlock.position.y - offset - 0.01
           break
         }
       }

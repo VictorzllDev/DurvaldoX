@@ -23,6 +23,7 @@ const map01 = new Scenario({
 const player = new Player({
   collisionBlocks,
   initialPosition: { x: 32 * 4, y: 32 * 6 },
+  spriteSrc: '/src/assets/sprites/robocop/ROBOCOP.png',
 })
 
 const keys = {
