@@ -9,10 +9,13 @@ export class Player {
   public gravity: number
   public collisionBlocks: CollisionBlock[]
 
-  constructor({ collisionBlocks }: { collisionBlocks: CollisionBlock[] }) {
+  constructor({
+    collisionBlocks,
+    initialPosition,
+  }: { collisionBlocks: CollisionBlock[]; initialPosition: { x: number; y: number } }) {
     this.width = 20
     this.height = 20
-    this.position = { x: 100, y: 100 }
+    this.position = initialPosition
     this.sides = {
       bottom: this.position.y + this.height,
     }

@@ -1,6 +1,6 @@
 import { collisionBlocks } from './assets/maps/map_01/collisions'
 import { Player } from './models/player.models'
-import { Sprite } from './models/sprite.models'
+import { Scenario } from './models/scenario.models'
 import './style.css'
 
 const canvas = document.querySelector('canvas')
@@ -12,7 +12,7 @@ if (!ctx) throw new Error('Error ctx')
 canvas.width = 32 * 16
 canvas.height = 32 * 9
 
-const map01 = new Sprite({
+const map01 = new Scenario({
   position: {
     x: 0,
     y: 0,
@@ -22,6 +22,7 @@ const map01 = new Sprite({
 
 const player = new Player({
   collisionBlocks,
+  initialPosition: { x: 32 * 4, y: 32 * 6 },
 })
 
 const keys = {

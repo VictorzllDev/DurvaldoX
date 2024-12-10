@@ -1,15 +1,15 @@
-export class Sprite {
+export class Scenario {
   position: { x: number; y: number }
-  spriteSrc: string
+  imageSrc: string
   image: HTMLImageElement
   loaded: boolean
 
-  constructor({ position, spriteSrc }: { position: { x: number; y: number }; spriteSrc: string }) {
+  constructor({ position, imageSrc }: { position: { x: number; y: number }; imageSrc: string }) {
     this.position = position
-    this.spriteSrc = spriteSrc
+    this.imageSrc = imageSrc
     this.loaded = false
     this.image = new Image()
-    this.image.src = spriteSrc
+    this.image.src = imageSrc
     this.image.onload = () => {
       this.loaded = true
     }
@@ -17,6 +17,6 @@ export class Sprite {
 
   draw(ctx: CanvasRenderingContext2D) {
     if (!this.loaded) return
-    ctx?.drawImage(this.image, this.position.x, this.position.y)
+    ctx.drawImage(this.image, this.position.x, this.position.y)
   }
 }
