@@ -10,19 +10,29 @@ export class Player extends Sprite {
   public gravity: number
   public collisionBlocks: CollisionBlock[]
   public hitbox: { position: { x: number; y: number }; width: number; height: number }
+  public lastDirection: string
 
   constructor({
     collisionBlocks,
     initialPosition,
     spriteSrc,
+    animations,
   }: {
     collisionBlocks: CollisionBlock[]
     initialPosition: { x: number; y: number }
     spriteSrc: string
+    animations: {
+      name: string
+      frameRate: number
+      frameBuffer: number
+      frameIndex: number
+      frameReverse: boolean
+      loop: boolean
+    }[]
   }) {
-    super({ position: initialPosition, spriteSrc, frameRate: 4 })
-    this.width = 20
-    this.height = 20
+    super({ position: initialPosition, spriteSrc, animations })
+    this.width = 32
+    this.height = 32
     this.position = initialPosition
     this.sides = {
       bottom: this.position.y + this.height,
@@ -31,9 +41,10 @@ export class Player extends Sprite {
       x: 0,
       y: 0,
     }
-    this.gravity = 1.3
+    this.gravity = 0.8
     this.collisionBlocks = collisionBlocks
     this.hitbox = { position: { x: this.position.x, y: this.position.y }, width: 0, height: 0 }
+    this.lastDirection = 'right'
   }
 
   update(): void {
@@ -47,6 +58,18 @@ export class Player extends Sprite {
     this.updateHitbox()
 
     this.checkForVerticalCollisions()
+  }
+
+  switchSprite(name: string): void {
+    const animation = this.animations.find((animation) => animation.name === name)
+
+    if (!animation) return
+    const { frameIndex, frameRate, frameBuffer, frameReverse } = animation
+
+    this.frameIndex = frameIndex
+    this.frameRate = frameRate
+    this.frameBuffer = frameBuffer
+    this.frameReverse = frameReverse
   }
 
   updateHitbox(): void {

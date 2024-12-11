@@ -5,18 +5,35 @@ export class Sprite {
   height: number
   loaded: boolean
   frameRate: number
+  frameBuffer: number
+  frameIndex: number
+  frameReverse: boolean
   currentFrame: number
   elapsedFrames: number
-  frameBuffer: number
+  animations: {
+    name: string
+    frameRate: number
+    frameBuffer: number
+    frameIndex: number
+    frameReverse: boolean
+    loop: boolean
+  }[]
 
   constructor({
     position,
     spriteSrc,
-    frameRate,
+    animations,
   }: {
     position: { x: number; y: number }
     spriteSrc: string
-    frameRate: number
+    animations: {
+      name: string
+      frameRate: number
+      frameBuffer: number
+      frameIndex: number
+      frameReverse: boolean
+      loop: boolean
+    }[]
   }) {
     this.position = position
     this.width = 0
@@ -29,10 +46,13 @@ export class Sprite {
     }
     this.image.src = spriteSrc
     this.loaded = false
-    this.frameRate = frameRate
     this.currentFrame = 0
     this.elapsedFrames = 10
-    this.frameBuffer = 5
+    this.animations = animations
+    this.frameRate = this.animations[0].frameRate
+    this.frameIndex = this.animations[0].frameIndex
+    this.frameBuffer = this.animations[0].frameBuffer
+    this.frameReverse = this.animations[0].frameReverse
   }
 
   draw(ctx: CanvasRenderingContext2D) {
@@ -40,23 +60,42 @@ export class Sprite {
     const cropbox = {
       position: {
         x: this.width * this.currentFrame,
-        y: 0,
+        y: this.width * this.frameIndex,
       },
       width: this.width,
       height: this.height,
     }
 
-    ctx.drawImage(
-      this.image,
-      cropbox.position.x,
-      cropbox.position.y,
-      cropbox.width,
-      cropbox.height,
-      this.position.x,
-      this.position.y,
-      this.width,
-      this.height,
-    )
+    if (this.frameReverse) {
+      ctx.save()
+      ctx.scale(-1, 1)
+
+      ctx.drawImage(
+        this.image,
+        cropbox.position.x,
+        cropbox.position.y,
+        cropbox.width,
+        cropbox.height,
+        -this.position.x - this.width,
+        this.position.y,
+        this.width,
+        this.height,
+      )
+
+      ctx.restore()
+    } else {
+      ctx.drawImage(
+        this.image,
+        cropbox.position.x,
+        cropbox.position.y,
+        cropbox.width,
+        cropbox.height,
+        this.position.x,
+        this.position.y,
+        this.width,
+        this.height,
+      )
+    }
 
     this.updateFrames()
   }

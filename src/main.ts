@@ -24,6 +24,40 @@ const player = new Player({
   collisionBlocks,
   initialPosition: { x: 32 * 4, y: 32 * 6 },
   spriteSrc: '/src/assets/sprites/robocop/ROBOCOP.png',
+  animations: [
+    {
+      name: 'idleRight',
+      frameRate: 4,
+      frameIndex: 0,
+      frameBuffer: 5,
+      frameReverse: false,
+      loop: true,
+    },
+    {
+      name: 'idleLeft',
+      frameRate: 4,
+      frameIndex: 0,
+      frameBuffer: 5,
+      frameReverse: true,
+      loop: true,
+    },
+    {
+      name: 'runRight',
+      frameRate: 4,
+      frameIndex: 1,
+      frameBuffer: 5,
+      frameReverse: false,
+      loop: true,
+    },
+    {
+      name: 'runLeft',
+      frameRate: 4,
+      frameIndex: 1,
+      frameBuffer: 5,
+      frameReverse: true,
+      loop: true,
+    },
+  ],
 })
 
 const keys = {
@@ -47,8 +81,18 @@ const loop = () => {
   }
 
   player.velocity.x = 0
-  if (keys.a.pressed) player.velocity.x = -2
-  if (keys.d.pressed) player.velocity.x = 2
+  if (keys.d.pressed) {
+    player.switchSprite('runRight')
+    player.velocity.x = 2
+    player.lastDirection = 'right'
+  } else if (keys.a.pressed) {
+    player.switchSprite('runLeft')
+    player.velocity.x = -2
+    player.lastDirection = 'left'
+  } else {
+    if (player.lastDirection === 'left') player.switchSprite('idleLeft')
+    if (player.lastDirection === 'right') player.switchSprite('idleRight')
+  }
 
   player.draw(ctx)
   player.update()
@@ -63,7 +107,7 @@ window.addEventListener('keydown', (e) => {
   switch (key) {
     case 'w':
       if (player.velocity.y === 0) {
-        player.velocity.y = -15
+        player.velocity.y = -11
       }
       break
 
