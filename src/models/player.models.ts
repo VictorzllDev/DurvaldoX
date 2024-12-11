@@ -76,7 +76,7 @@ export class Player extends Sprite {
     this.hitbox = {
       position: {
         x: this.position.x + 7,
-        y: this.position.y + 14,
+        y: this.position.y + 13,
       },
       width: 18,
       height: 18,

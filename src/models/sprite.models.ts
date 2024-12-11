@@ -60,7 +60,7 @@ export class Sprite {
     const cropbox = {
       position: {
         x: this.width * this.currentFrame,
-        y: this.width * this.frameIndex,
+        y: this.width * this.frameIndex + 1,
       },
       width: this.width,
       height: this.height,
