@@ -1,4 +1,4 @@
-import { CollisionBlock } from './collisionBlock.models'
+import type { CollisionBlock } from './collisionBlock.models'
 
 export class Projectile {
   width: number
@@ -73,7 +73,7 @@ export class Projectile {
     )
   }
 
-  checkCollisionHorizontal(collisionBlocks: CollisionBlock[]): boolean {
+  checkForHorizontalCollisions(collisionBlocks: CollisionBlock[]): boolean {
     for (const collisionBlock of collisionBlocks) {
       if (
         this.position.x + 32 >= collisionBlock.position.x &&
