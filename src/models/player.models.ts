@@ -1,4 +1,5 @@
 import type { CollisionBlock } from './collisionBlock.models'
+import { Projectile } from './projectile.models'
 import { Sprite } from './sprite.models'
 
 export class Player extends Sprite {
@@ -10,7 +11,9 @@ export class Player extends Sprite {
   public gravity: number
   public collisionBlocks: CollisionBlock[]
   public hitbox: { position: { x: number; y: number }; width: number; height: number }
-  public lastDirection: string
+  public lastDirection: 'right' | 'left'
+  public projectiles: Projectile[]
+  public canShoot: boolean
 
   constructor({
     collisionBlocks,
@@ -45,9 +48,11 @@ export class Player extends Sprite {
     this.collisionBlocks = collisionBlocks
     this.hitbox = { position: { x: this.position.x, y: this.position.y }, width: 0, height: 0 }
     this.lastDirection = 'right'
+    this.projectiles = []
+    this.canShoot = true
   }
 
-  update(): void {
+  update(ctx: CanvasRenderingContext2D): void {
     this.position.x += this.velocity.x
 
     this.updateHitbox()
@@ -58,6 +63,32 @@ export class Player extends Sprite {
     this.updateHitbox()
 
     this.checkForVerticalCollisions()
+
+    this.updateProjectiles(ctx)
+  }
+
+  updateProjectiles(ctx: CanvasRenderingContext2D): void {
+    for (let i = this.projectiles.length - 1; i >= 0; i--) {
+      const projectile = this.projectiles[i]
+      projectile.draw(ctx)
+      projectile.update()
+
+      if (projectile.isOutOfBounds(ctx.canvas.width, ctx.canvas.height)) {
+        this.projectiles.splice(i, 1)
+      }
+    }
+  }
+
+  shoot(shootRate: number): void {
+    if (this.elapsedFrames % shootRate !== 0) return
+
+    const shoot = new Projectile({
+      position: { x: this.position.x, y: this.position.y },
+      velocity: { x: shootRate / 2, y: 0 },
+      shootDirection: this.lastDirection,
+    })
+
+    this.projectiles.push(shoot)
   }
 
   switchSprite(name: string): void {
@@ -65,6 +96,9 @@ export class Player extends Sprite {
 
     if (!animation) return
     const { frameIndex, frameRate, frameBuffer, frameReverse } = animation
+
+    if (this.frameIndex === frameIndex && this.frameReverse === frameReverse) return
+    this.currentFrame = 0
 
     this.frameIndex = frameIndex
     this.frameRate = frameRate

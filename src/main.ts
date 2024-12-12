@@ -57,6 +57,39 @@ const player = new Player({
       frameReverse: true,
       loop: true,
     },
+    {
+      name: 'shootRight',
+      frameRate: 3,
+      frameIndex: 3,
+      frameBuffer: 5,
+      frameReverse: false,
+      loop: true,
+    },
+    {
+      name: 'shootLeft',
+      frameRate: 3,
+      frameIndex: 3,
+      frameBuffer: 5,
+      frameReverse: true,
+      loop: true,
+    },
+    {
+      name: 'runShootRight',
+      frameRate: 4,
+      frameIndex: 8,
+      frameBuffer: 5,
+      frameReverse: false,
+      loop: true,
+    },
+
+    {
+      name: 'runShootLeft',
+      frameRate: 4,
+      frameIndex: 8,
+      frameBuffer: 5,
+      frameReverse: true,
+      loop: true,
+    },
   ],
 })
 
@@ -70,6 +103,9 @@ const keys = {
   d: {
     pressed: false,
   },
+  l: {
+    pressed: false,
+  },
 }
 
 const loop = () => {
@@ -81,21 +117,37 @@ const loop = () => {
   }
 
   player.velocity.x = 0
-  if (keys.d.pressed) {
-    player.switchSprite('runRight')
+
+  const isMovingRight = keys.d.pressed
+  const isMovingLeft = keys.a.pressed
+  const isShooting = keys.l.pressed
+
+  if (isMovingRight) {
+    player.switchSprite(isShooting ? 'runShootRight' : 'runRight')
     player.velocity.x = 2
     player.lastDirection = 'right'
-  } else if (keys.a.pressed) {
-    player.switchSprite('runLeft')
+  } else if (isMovingLeft) {
+    player.switchSprite(isShooting ? 'runShootLeft' : 'runLeft')
     player.velocity.x = -2
     player.lastDirection = 'left'
   } else {
-    if (player.lastDirection === 'left') player.switchSprite('idleLeft')
-    if (player.lastDirection === 'right') player.switchSprite('idleRight')
+    const idleSprite = isShooting
+      ? player.lastDirection === 'left'
+        ? 'shootLeft'
+        : 'shootRight'
+      : player.lastDirection === 'left'
+        ? 'idleLeft'
+        : 'idleRight'
+
+    player.switchSprite(idleSprite)
+  }
+
+  if (isShooting) {
+    player.shoot(10)
   }
 
   player.draw(ctx)
-  player.update()
+  player.update(ctx)
 
   requestAnimationFrame(loop)
 }
@@ -118,6 +170,10 @@ window.addEventListener('keydown', (e) => {
     case 'd':
       keys.d.pressed = true
       break
+
+    case 'l':
+      keys.l.pressed = true
+      break
   }
 })
 
@@ -131,6 +187,10 @@ window.addEventListener('keyup', (e) => {
 
     case 'd':
       keys.d.pressed = false
+      break
+
+    case 'l':
+      keys.l.pressed = false
       break
   }
 })
