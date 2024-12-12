@@ -4,6 +4,7 @@ export class Projectile {
   position: { x: number; y: number }
   velocity: { x: number; y: number }
   shootDirection: 'right' | 'left'
+  bullet: HTMLImageElement
 
   constructor({
     position,
@@ -19,17 +20,23 @@ export class Projectile {
     this.position = position
     this.velocity = velocity
     this.shootDirection = shootDirection
+    this.bullet = new Image()
+    this.bullet.src = '/src/assets/sprites/robocop/bullet.png'
   }
 
   draw(ctx: CanvasRenderingContext2D): void {
     ctx.fillStyle = '#f9f48e'
 
     if (this.shootDirection === 'right') {
-      ctx.fillRect(this.position.x + 31, this.position.y + 20, this.width, this.height)
+      ctx.drawImage(this.bullet, this.position.x + 32, this.position.y)
     }
 
     if (this.shootDirection === 'left') {
-      ctx.fillRect(this.position.x - 2, this.position.y + 20, this.width, this.height)
+      ctx.save()
+      ctx.scale(-1, 1)
+
+      ctx.drawImage(this.bullet, -this.position.x, this.position.y)
+      ctx.restore()
     }
   }
 

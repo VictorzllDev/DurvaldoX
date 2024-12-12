@@ -79,12 +79,13 @@ export class Player extends Sprite {
     }
   }
 
-  shoot(shootRate: number): void {
-    if (this.elapsedFrames % shootRate !== 0) return
+  shoot(): void {
+    if (this.elapsedFrames % this.frameBuffer !== 0) return
+    if (this.currentFrame !== this.frameRate - 1) return
 
     const shoot = new Projectile({
-      position: { x: this.position.x, y: this.position.y },
-      velocity: { x: shootRate / 2, y: 0 },
+      position: { x: this.position.x, y: this.position.y + 21 },
+      velocity: { x: this.frameRate * 2, y: 0 },
       shootDirection: this.lastDirection,
     })
 
