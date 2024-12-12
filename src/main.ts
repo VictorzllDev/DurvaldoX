@@ -143,7 +143,7 @@ const loop = () => {
   }
 
   if (isShooting) {
-    player.shoot(10)
+    player.shoot(ctx)
   }
 
   player.draw(ctx)

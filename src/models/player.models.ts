@@ -79,17 +79,19 @@ export class Player extends Sprite {
     }
   }
 
-  shoot(): void {
+  shoot(ctx: CanvasRenderingContext2D): void {
     if (this.elapsedFrames % this.frameBuffer !== 0) return
     if (this.currentFrame !== this.frameRate - 1) return
 
-    const shoot = new Projectile({
+    const projectile = new Projectile({
       position: { x: this.position.x, y: this.position.y + 21 },
       velocity: { x: this.frameRate * 2, y: 0 },
       shootDirection: this.lastDirection,
     })
 
-    this.projectiles.push(shoot)
+    projectile.showMuzzleFlash(ctx)
+
+    this.projectiles.push(projectile)
   }
 
   switchSprite(name: string): void {

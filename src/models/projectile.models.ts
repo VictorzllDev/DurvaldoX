@@ -5,6 +5,7 @@ export class Projectile {
   velocity: { x: number; y: number }
   shootDirection: 'right' | 'left'
   bullet: HTMLImageElement
+  muzzleFlash: HTMLImageElement
 
   constructor({
     position,
@@ -22,6 +23,8 @@ export class Projectile {
     this.shootDirection = shootDirection
     this.bullet = new Image()
     this.bullet.src = '/src/assets/sprites/robocop/bullet.png'
+    this.muzzleFlash = new Image()
+    this.muzzleFlash.src = '/src/assets/sprites/robocop/muzzle-flash.png'
   }
 
   draw(ctx: CanvasRenderingContext2D): void {
@@ -43,6 +46,20 @@ export class Projectile {
   update(): void {
     const directionMultiplier = this.shootDirection === 'right' ? 1 : -1
     this.position.x += this.velocity.x * directionMultiplier
+  }
+
+  showMuzzleFlash(ctx: CanvasRenderingContext2D): void {
+    if (this.shootDirection === 'right') {
+      ctx.drawImage(this.muzzleFlash, this.position.x + 32, this.position.y - 4)
+    }
+
+    if (this.shootDirection === 'left') {
+      ctx.save()
+      ctx.scale(-1, 1)
+
+      ctx.drawImage(this.muzzleFlash, -this.position.x, this.position.y - 4)
+      ctx.restore()
+    }
   }
 
   isOutOfBounds(canvasWidth: number, canvasHeight: number): boolean {
