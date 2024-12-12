@@ -28,8 +28,6 @@ export class Projectile {
   }
 
   draw(ctx: CanvasRenderingContext2D): void {
-    ctx.fillStyle = '#f9f48e'
-
     if (this.shootDirection === 'right') {
       ctx.drawImage(this.bullet, this.position.x + 32, this.position.y)
     }
@@ -44,7 +42,9 @@ export class Projectile {
   }
 
   update(): void {
-    const directionMultiplier = this.shootDirection === 'right' ? 1 : -1
+    const directionMultiplier =
+      this.shootDirection === 'right' ? 1 : this.shootDirection === 'left' ? -1 : 0
+
     this.position.x += this.velocity.x * directionMultiplier
   }
 

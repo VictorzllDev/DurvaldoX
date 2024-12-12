@@ -3,17 +3,15 @@ import { Projectile } from './projectile.models'
 import { Sprite } from './sprite.models'
 
 export class Player extends Sprite {
-  public width: number
-  public height: number
-  public position: { x: number; y: number }
-  public sides: { bottom: number }
-  public velocity: { x: number; y: number }
-  public gravity: number
-  public collisionBlocks: CollisionBlock[]
-  public hitbox: { position: { x: number; y: number }; width: number; height: number }
-  public lastDirection: 'right' | 'left'
-  public projectiles: Projectile[]
-  public canShoot: boolean
+  width: number
+  height: number
+  position: { x: number; y: number }
+  velocity: { x: number; y: number }
+  gravity: number
+  collisionBlocks: CollisionBlock[]
+  hitbox: { position: { x: number; y: number }; width: number; height: number }
+  lastDirection: 'right' | 'left'
+  projectiles: Projectile[]
 
   constructor({
     collisionBlocks,
@@ -37,9 +35,6 @@ export class Player extends Sprite {
     this.width = 32
     this.height = 32
     this.position = initialPosition
-    this.sides = {
-      bottom: this.position.y + this.height,
-    }
     this.velocity = {
       x: 0,
       y: 0,
@@ -49,7 +44,6 @@ export class Player extends Sprite {
     this.hitbox = { position: { x: this.position.x, y: this.position.y }, width: 0, height: 0 }
     this.lastDirection = 'right'
     this.projectiles = []
-    this.canShoot = true
   }
 
   update(ctx: CanvasRenderingContext2D): void {
@@ -112,11 +106,11 @@ export class Player extends Sprite {
   updateHitbox(): void {
     this.hitbox = {
       position: {
-        x: this.position.x + 7,
-        y: this.position.y + 13,
+        x: this.position.x + 11,
+        y: this.position.y + 15,
       },
-      width: 18,
-      height: 18,
+      width: 9,
+      height: 16,
     }
   }
 
