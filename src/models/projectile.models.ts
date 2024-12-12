@@ -1,3 +1,5 @@
+import { CollisionBlock } from './collisionBlock.models'
+
 export class Projectile {
   width: number
   height: number
@@ -69,5 +71,18 @@ export class Projectile {
       this.position.y + this.height < 0 ||
       this.position.y > canvasHeight
     )
+  }
+
+  checkCollisionHorizontal(collisionBlocks: CollisionBlock[]): boolean {
+    for (const collisionBlock of collisionBlocks) {
+      if (
+        this.position.x + 32 >= collisionBlock.position.x &&
+        this.position.x <= collisionBlock.position.x + collisionBlock.width &&
+        this.position.y >= collisionBlock.position.y &&
+        this.position.y <= collisionBlock.position.y + collisionBlock.height
+      )
+        return true
+    }
+    return false
   }
 }
