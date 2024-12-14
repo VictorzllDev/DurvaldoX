@@ -3,36 +3,33 @@ import type { CollisionBlock } from './collisionBlock.models'
 import { Projectile } from './projectile.models'
 import { Sprite } from './sprite.models'
 
-export class Player extends Sprite {
-  width: number
-  height: number
-  position: { x: number; y: number }
-  velocity: { x: number; y: number }
-  gravity: number
+interface IPlayerProps {
   collisionBlocks: CollisionBlock[]
-  hitbox: { position: { x: number; y: number }; width: number; height: number }
-  lastDirection: 'right' | 'left'
-  projectiles: Projectile[]
-  capsules: Capsule[]
+  initialPosition: { x: number; y: number }
+  spriteSrc: string
+  animations: {
+    name: string
+    frameRate: number
+    frameBuffer: number
+    frameIndex: number
+    frameReverse: boolean
+    loop: boolean
+  }[]
+}
 
-  constructor({
-    collisionBlocks,
-    initialPosition,
-    spriteSrc,
-    animations,
-  }: {
-    collisionBlocks: CollisionBlock[]
-    initialPosition: { x: number; y: number }
-    spriteSrc: string
-    animations: {
-      name: string
-      frameRate: number
-      frameBuffer: number
-      frameIndex: number
-      frameReverse: boolean
-      loop: boolean
-    }[]
-  }) {
+export class Player extends Sprite {
+  public width: number
+  public height: number
+  public position: { x: number; y: number }
+  public velocity: { x: number; y: number }
+  public gravity: number
+  public collisionBlocks: CollisionBlock[]
+  public hitbox: { position: { x: number; y: number }; width: number; height: number }
+  public lastDirection: 'right' | 'left'
+  private projectiles: Projectile[]
+  private capsules: Capsule[]
+
+  constructor({ collisionBlocks, initialPosition, spriteSrc, animations }: IPlayerProps) {
     super({ position: initialPosition, spriteSrc, animations })
     this.width = 32
     this.height = 32
@@ -49,7 +46,7 @@ export class Player extends Sprite {
     this.capsules = []
   }
 
-  update(ctx: CanvasRenderingContext2D): void {
+  public update(ctx: CanvasRenderingContext2D): void {
     this.position.x += this.velocity.x
 
     this.updateHitbox()
@@ -64,67 +61,7 @@ export class Player extends Sprite {
     this.updateProjectiles(ctx)
   }
 
-  updateProjectiles(ctx: CanvasRenderingContext2D): void {
-    for (let i = this.projectiles.length - 1; i >= 0; i--) {
-      const projectile = this.projectiles[i]
-      projectile.draw(ctx)
-      projectile.update()
-
-      if (
-        projectile.isOutOfBounds(ctx.canvas.width, ctx.canvas.height) ||
-        projectile.checkForHorizontalCollisions(this.collisionBlocks)
-      ) {
-        this.projectiles.splice(i, 1)
-      }
-    }
-
-    for (const capsule of this.capsules) {
-      capsule.draw(ctx)
-      capsule.update()
-    }
-  }
-
-  shoot(ctx: CanvasRenderingContext2D): void {
-    if (this.elapsedFrames % this.frameBuffer !== 0) return
-    if (this.currentFrame !== this.frameRate - 1) return
-
-    const projectile = new Projectile({
-      position: { x: this.position.x, y: this.position.y + 21 },
-      velocity: { x: this.frameRate * 2, y: 0 },
-      shootDirection: this.lastDirection,
-    })
-
-    projectile.showMuzzleFlash(ctx)
-
-    this.projectiles.push(projectile)
-
-    const capsule = new Capsule({
-      position: { x: this.position.x + this.width / 2, y: this.position.y + this.height / 2 },
-      velocity: { x: this.frameRate, y: 0 },
-      shootDirection: this.lastDirection,
-      gravity: this.gravity,
-      collisionBlocks: this.collisionBlocks,
-    })
-
-    this.capsules.push(capsule)
-  }
-
-  switchSprite(name: string): void {
-    const animation = this.animations.find((animation) => animation.name === name)
-
-    if (!animation) return
-    const { frameIndex, frameRate, frameBuffer, frameReverse } = animation
-
-    if (this.frameIndex === frameIndex && this.frameReverse === frameReverse) return
-    this.currentFrame = 0
-
-    this.frameIndex = frameIndex
-    this.frameRate = frameRate
-    this.frameBuffer = frameBuffer
-    this.frameReverse = frameReverse
-  }
-
-  updateHitbox(): void {
+  private updateHitbox(): void {
     this.hitbox = {
       position: {
         x: this.position.x + 11,
@@ -135,7 +72,7 @@ export class Player extends Sprite {
     }
   }
 
-  checkForHorizontalCollisions(): void {
+  private checkForHorizontalCollisions(): void {
     for (let i = 0; i < this.collisionBlocks.length; i++) {
       const collisionBlock = this.collisionBlocks[i]
 
@@ -159,12 +96,12 @@ export class Player extends Sprite {
     }
   }
 
-  applyGravity(): void {
+  private applyGravity(): void {
     this.velocity.y += this.gravity
     this.position.y += this.velocity.y
   }
 
-  checkForVerticalCollisions(): void {
+  private checkForVerticalCollisions(): void {
     for (let i = 0; i < this.collisionBlocks.length; i++) {
       const collisionBlock = this.collisionBlocks[i]
 
@@ -188,5 +125,64 @@ export class Player extends Sprite {
         }
       }
     }
+  }
+
+  public switchSprite(name: string): void {
+    const animation = this.animations.find((animation) => animation.name === name)
+
+    if (!animation) return
+    const { frameIndex, frameRate, frameBuffer, frameReverse } = animation
+
+    if (this.frameIndex === frameIndex && this.frameReverse === frameReverse) return
+    this.currentFrame = 0
+
+    this.frameIndex = frameIndex
+    this.frameRate = frameRate
+    this.frameBuffer = frameBuffer
+    this.frameReverse = frameReverse
+  }
+
+  private updateProjectiles(ctx: CanvasRenderingContext2D): void {
+    for (const [i, projectile] of this.projectiles.entries()) {
+      projectile.draw(ctx)
+      projectile.update()
+
+      if (
+        projectile.isOutOfBounds(ctx.canvas.width, ctx.canvas.height) ||
+        projectile.checkForHorizontalCollisions(this.collisionBlocks)
+      ) {
+        this.projectiles.splice(i, 1)
+      }
+    }
+
+    for (const capsule of this.capsules) {
+      capsule.draw(ctx)
+      capsule.update()
+    }
+  }
+
+  public shoot(ctx: CanvasRenderingContext2D): void {
+    if (this.elapsedFrames % this.frameBuffer !== 0) return
+    if (this.currentFrame !== this.frameRate - 1) return
+
+    const projectile = new Projectile({
+      position: { x: this.position.x, y: this.position.y + 21 },
+      velocity: { x: this.frameRate * 2, y: 0 },
+      shootDirection: this.lastDirection,
+    })
+
+    projectile.showMuzzleFlash(ctx)
+
+    this.projectiles.push(projectile)
+
+    const capsule = new Capsule({
+      position: { x: this.position.x + this.width / 2, y: this.position.y + this.height / 2 },
+      velocity: { x: this.frameRate, y: 0 },
+      shootDirection: this.lastDirection,
+      gravity: this.gravity,
+      collisionBlocks: this.collisionBlocks,
+    })
+
+    this.capsules.push(capsule)
   }
 }
