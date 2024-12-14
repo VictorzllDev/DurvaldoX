@@ -1,25 +1,22 @@
 import type { CollisionBlock } from './collisionBlock.models'
 
-export class Projectile {
-  width: number
-  height: number
+interface IProjectileProps {
   position: { x: number; y: number }
   velocity: { x: number; y: number }
   shootDirection: 'right' | 'left'
-  bullet: HTMLImageElement
-  muzzleFlash: HTMLImageElement
+}
+export class Projectile {
+  public width: number
+  public height: number
+  public position: { x: number; y: number }
+  public velocity: { x: number; y: number }
+  public shootDirection: 'right' | 'left'
+  public bullet: HTMLImageElement
+  public muzzleFlash: HTMLImageElement
 
-  constructor({
-    position,
-    velocity,
-    shootDirection,
-  }: {
-    position: { x: number; y: number }
-    velocity: { x: number; y: number }
-    shootDirection: 'right' | 'left'
-  }) {
-    this.width = 4
-    this.height = 2
+  constructor({ position, velocity, shootDirection }: IProjectileProps) {
+    this.width = 32
+    this.height = 32
     this.position = position
     this.velocity = velocity
     this.shootDirection = shootDirection
@@ -29,9 +26,9 @@ export class Projectile {
     this.muzzleFlash.src = '/src/assets/sprites/robocop/muzzle-flash.png'
   }
 
-  draw(ctx: CanvasRenderingContext2D): void {
+  public draw(ctx: CanvasRenderingContext2D): void {
     if (this.shootDirection === 'right') {
-      ctx.drawImage(this.bullet, this.position.x + 32, this.position.y)
+      ctx.drawImage(this.bullet, this.position.x + this.width, this.position.y)
     }
 
     if (this.shootDirection === 'left') {
@@ -43,14 +40,14 @@ export class Projectile {
     }
   }
 
-  update(): void {
+  public update(): void {
     const directionMultiplier =
       this.shootDirection === 'right' ? 1 : this.shootDirection === 'left' ? -1 : 0
 
     this.position.x += this.velocity.x * directionMultiplier
   }
 
-  showMuzzleFlash(ctx: CanvasRenderingContext2D): void {
+  public showMuzzleFlash(ctx: CanvasRenderingContext2D): void {
     if (this.shootDirection === 'right') {
       ctx.drawImage(this.muzzleFlash, this.position.x + 32, this.position.y - 4)
     }
@@ -64,7 +61,7 @@ export class Projectile {
     }
   }
 
-  isOutOfBounds(canvasWidth: number, canvasHeight: number): boolean {
+  public isOutOfBounds(canvasWidth: number, canvasHeight: number): boolean {
     return (
       this.position.x + this.width < 0 ||
       this.position.x > canvasWidth ||
@@ -73,10 +70,10 @@ export class Projectile {
     )
   }
 
-  checkForHorizontalCollisions(collisionBlocks: CollisionBlock[]): boolean {
+  public checkForHorizontalCollisions(collisionBlocks: CollisionBlock[]): boolean {
     for (const collisionBlock of collisionBlocks) {
       if (
-        this.position.x + 32 >= collisionBlock.position.x &&
+        this.position.x + this.width >= collisionBlock.position.x &&
         this.position.x <= collisionBlock.position.x + collisionBlock.width &&
         this.position.y >= collisionBlock.position.y &&
         this.position.y <= collisionBlock.position.y + collisionBlock.height
