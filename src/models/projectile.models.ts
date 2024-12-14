@@ -13,6 +13,7 @@ export class Projectile {
   public shootDirection: 'right' | 'left'
   public bullet: HTMLImageElement
   public muzzleFlash: HTMLImageElement
+  public gunshotSound: HTMLAudioElement
 
   constructor({ position, velocity, shootDirection }: IProjectileProps) {
     this.width = 32
@@ -24,6 +25,7 @@ export class Projectile {
     this.bullet.src = '/src/assets/sprites/robocop/bullet.png'
     this.muzzleFlash = new Image()
     this.muzzleFlash.src = '/src/assets/sprites/robocop/muzzle-flash.png'
+    this.gunshotSound = new Audio('/src/assets/sounds/gunshot-1.mp3')
   }
 
   public draw(ctx: CanvasRenderingContext2D): void {
@@ -45,6 +47,11 @@ export class Projectile {
       this.shootDirection === 'right' ? 1 : this.shootDirection === 'left' ? -1 : 0
 
     this.position.x += this.velocity.x * directionMultiplier
+  }
+
+  public playGunshotSound(): void {
+    this.gunshotSound.currentTime = 0
+    this.gunshotSound.play()
   }
 
   public showMuzzleFlash(ctx: CanvasRenderingContext2D): void {

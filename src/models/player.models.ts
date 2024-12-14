@@ -172,6 +172,7 @@ export class Player extends Sprite {
     })
 
     projectile.showMuzzleFlash(ctx)
+    projectile.playGunshotSound()
 
     this.projectiles.push(projectile)
 
