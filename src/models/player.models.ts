@@ -184,6 +184,7 @@ export class Player extends Sprite {
       collisionBlocks: this.collisionBlocks,
     })
 
+    capsule.playShootDropSound()
     this.capsules.push(capsule)
   }
 }

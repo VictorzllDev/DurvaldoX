@@ -51,6 +51,7 @@ export class Projectile {
 
   public playGunshotSound(): void {
     this.gunshotSound.currentTime = 0
+    this.gunshotSound.volume = 0.5
     this.gunshotSound.play()
   }
 

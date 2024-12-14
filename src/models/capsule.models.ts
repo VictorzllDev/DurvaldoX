@@ -16,6 +16,7 @@ export class Capsule {
   public shootDirection: 'right' | 'left'
   public gravity: number
   public collisionBlocks: CollisionBlock[]
+  public shootDropSound: HTMLAudioElement
 
   constructor({ position, velocity, shootDirection, gravity, collisionBlocks }: CapsuleProps) {
     this.width = 1
@@ -25,6 +26,7 @@ export class Capsule {
     this.shootDirection = shootDirection
     this.gravity = gravity
     this.collisionBlocks = collisionBlocks
+    this.shootDropSound = new Audio('/src/assets/sounds/shoot-drop.mp3')
 
     this.initVelocity()
   }
@@ -97,5 +99,11 @@ export class Capsule {
         }
       }
     }
+  }
+
+  public playShootDropSound(): void {
+    this.shootDropSound.currentTime = 0.2
+    this.shootDropSound.volume = 0.6
+    this.shootDropSound.play()
   }
 }
