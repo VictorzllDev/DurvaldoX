@@ -1,10 +1,15 @@
-export class Scenario {
+interface IScenarioProps {
   position: { x: number; y: number }
   imageSrc: string
-  image: HTMLImageElement
-  loaded: boolean
+}
 
-  constructor({ position, imageSrc }: { position: { x: number; y: number }; imageSrc: string }) {
+export class Scenario {
+  public position: { x: number; y: number }
+  public imageSrc: string
+  public image: HTMLImageElement
+  public loaded: boolean
+
+  constructor({ position, imageSrc }: IScenarioProps) {
     this.position = position
     this.imageSrc = imageSrc
     this.loaded = false
@@ -15,7 +20,7 @@ export class Scenario {
     }
   }
 
-  draw(ctx: CanvasRenderingContext2D) {
+  public draw(ctx: CanvasRenderingContext2D) {
     if (!this.loaded) return
     ctx.drawImage(this.image, this.position.x, this.position.y)
   }
