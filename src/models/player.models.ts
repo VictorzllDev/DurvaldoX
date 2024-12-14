@@ -1,3 +1,4 @@
+import { Capsule } from './capsule.models'
 import type { CollisionBlock } from './collisionBlock.models'
 import { Projectile } from './projectile.models'
 import { Sprite } from './sprite.models'
@@ -12,6 +13,7 @@ export class Player extends Sprite {
   hitbox: { position: { x: number; y: number }; width: number; height: number }
   lastDirection: 'right' | 'left'
   projectiles: Projectile[]
+  capsules: Capsule[]
 
   constructor({
     collisionBlocks,
@@ -44,6 +46,7 @@ export class Player extends Sprite {
     this.hitbox = { position: { x: this.position.x, y: this.position.y }, width: 0, height: 0 }
     this.lastDirection = 'right'
     this.projectiles = []
+    this.capsules = []
   }
 
   update(ctx: CanvasRenderingContext2D): void {
@@ -74,6 +77,11 @@ export class Player extends Sprite {
         this.projectiles.splice(i, 1)
       }
     }
+
+    for (const capsule of this.capsules) {
+      capsule.draw(ctx)
+      capsule.update()
+    }
   }
 
   shoot(ctx: CanvasRenderingContext2D): void {
@@ -89,6 +97,16 @@ export class Player extends Sprite {
     projectile.showMuzzleFlash(ctx)
 
     this.projectiles.push(projectile)
+
+    const capsule = new Capsule({
+      position: { x: this.position.x + this.width / 2, y: this.position.y + this.height / 2 },
+      velocity: { x: this.frameRate, y: 0 },
+      shootDirection: this.lastDirection,
+      gravity: this.gravity,
+      collisionBlocks: this.collisionBlocks,
+    })
+
+    this.capsules.push(capsule)
   }
 
   switchSprite(name: string): void {
