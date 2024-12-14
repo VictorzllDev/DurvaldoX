@@ -1,15 +1,6 @@
-export class Sprite {
+interface ISpriteProps {
   position: { x: number; y: number }
-  image: HTMLImageElement
-  width: number
-  height: number
-  loaded: boolean
-  frameRate: number
-  frameBuffer: number
-  frameIndex: number
-  frameReverse: boolean
-  currentFrame: number
-  elapsedFrames: number
+  spriteSrc: string
   animations: {
     name: string
     frameRate: number
@@ -18,23 +9,30 @@ export class Sprite {
     frameReverse: boolean
     loop: boolean
   }[]
+}
 
-  constructor({
-    position,
-    spriteSrc,
-    animations,
-  }: {
-    position: { x: number; y: number }
-    spriteSrc: string
-    animations: {
-      name: string
-      frameRate: number
-      frameBuffer: number
-      frameIndex: number
-      frameReverse: boolean
-      loop: boolean
-    }[]
-  }) {
+export class Sprite {
+  public width: number
+  public height: number
+  public position: { x: number; y: number }
+  public image: HTMLImageElement
+  public loaded: boolean
+  public frameRate: number
+  public frameBuffer: number
+  public frameIndex: number
+  public frameReverse: boolean
+  public currentFrame: number
+  public elapsedFrames: number
+  public animations: {
+    name: string
+    frameRate: number
+    frameBuffer: number
+    frameIndex: number
+    frameReverse: boolean
+    loop: boolean
+  }[]
+
+  constructor({ position, spriteSrc, animations }: ISpriteProps) {
     this.position = position
     this.width = 0
     this.height = 0
@@ -55,7 +53,7 @@ export class Sprite {
     this.frameReverse = this.animations[0].frameReverse
   }
 
-  draw(ctx: CanvasRenderingContext2D) {
+  public draw(ctx: CanvasRenderingContext2D) {
     if (!this.loaded) return
     const cropbox = {
       position: {
@@ -100,7 +98,7 @@ export class Sprite {
     this.updateFrames()
   }
 
-  updateFrames() {
+  private updateFrames() {
     this.elapsedFrames++
     if (this.elapsedFrames % this.frameBuffer === 0) {
       if (this.currentFrame < this.frameRate - 1) this.currentFrame++
