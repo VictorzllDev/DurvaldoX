@@ -9,22 +9,22 @@ interface CapsuleProps {
 }
 
 export class Capsule {
-  width: number
-  height: number
-  position: { x: number; y: number }
-  velocity: { x: number; y: number }
-  shootDirection: 'right' | 'left'
-  gravity: number
-  collisionBlocks: CollisionBlock[]
+  public width: number
+  public height: number
+  public position: { x: number; y: number }
+  public velocity: { x: number; y: number }
+  public shootDirection: 'right' | 'left'
+  public gravity: number
+  public collisionBlocks: CollisionBlock[]
 
-  constructor(props: CapsuleProps) {
+  constructor({ position, velocity, shootDirection, gravity, collisionBlocks }: CapsuleProps) {
     this.width = 1
     this.height = 1
-    this.position = props.position
-    this.velocity = props.velocity
-    this.shootDirection = props.shootDirection
-    this.gravity = props.gravity
-    this.collisionBlocks = props.collisionBlocks
+    this.position = position
+    this.velocity = velocity
+    this.shootDirection = shootDirection
+    this.gravity = gravity
+    this.collisionBlocks = collisionBlocks
 
     this.initVelocity()
   }
@@ -38,12 +38,12 @@ export class Capsule {
     }
   }
 
-  draw(ctx: CanvasRenderingContext2D): void {
+  public draw(ctx: CanvasRenderingContext2D): void {
     ctx.fillStyle = '#ffeb00'
     ctx.fillRect(this.position.x, this.position.y, this.width, this.height)
   }
 
-  update(): void {
+  public update(): void {
     this.position.x += this.velocity.x
     this.velocity.x *= this.gravity
 
@@ -54,7 +54,7 @@ export class Capsule {
     this.checkForVerticalCollisions()
   }
 
-  checkForHorizontalCollisions(): void {
+  private checkForHorizontalCollisions(): void {
     for (const collisionBlock of this.collisionBlocks) {
       if (
         this.position.x <= collisionBlock.position.x + collisionBlock.width &&
@@ -77,12 +77,12 @@ export class Capsule {
     }
   }
 
-  applyGravity(): void {
+  private applyGravity(): void {
     this.velocity.y += this.gravity
     this.position.y += this.velocity.y
   }
 
-  checkForVerticalCollisions(): void {
+  private checkForVerticalCollisions(): void {
     for (const collisionBlock of this.collisionBlocks) {
       if (
         this.position.x <= collisionBlock.position.x + collisionBlock.width &&
