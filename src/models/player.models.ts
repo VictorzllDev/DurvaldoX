@@ -147,10 +147,7 @@ export class Player extends Sprite {
       projectile.draw(ctx)
       projectile.update()
 
-      if (
-        projectile.isOutOfBounds(ctx.canvas.width, ctx.canvas.height) ||
-        projectile.checkForHorizontalCollisions(this.collisionBlocks)
-      ) {
+      if (projectile.checkForHorizontalCollisions(this.collisionBlocks)) {
         this.projectiles.splice(i, 1)
       }
     }
