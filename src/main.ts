@@ -112,6 +112,7 @@ const loop = () => {
   ctx.clearRect(0, 0, canvas.width, canvas.height)
 
   map01.draw(ctx)
+  // Debug das collisions
   for (let i = 0; i < collisionBlocks.length; i++) {
     collisionBlocks[i].draw(ctx)
   }
